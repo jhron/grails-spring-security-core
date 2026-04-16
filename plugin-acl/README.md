@@ -19,6 +19,16 @@ Grails Spring Security ACL Plugin
 
 See [documentation](https://apache.github.io/grails-spring-security/latest/acl-plugin/guide) for further information.
 
+## Features
+
+- **Configurable domain classes** -- ACL domain classes use a trait-based
+  architecture (`AclClassTrait`, `AclSidTrait`, `AclObjectIdentityTrait`,
+  `AclEntryTrait`) that allows you to replace the default implementations with
+  custom domain classes. This enables advanced use cases such as GORM
+  multi-tenancy and 2nd-level caching. See the
+  [Configurable Domain Classes](https://apache.github.io/grails-spring-security/latest/acl-plugin/guide#acl-configurableDomainClasses)
+  section in the documentation.
+
 ## v5.0.0 changes
 
 ### Caching

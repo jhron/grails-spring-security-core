@@ -26,6 +26,8 @@ include::usage/acls.adoc[]
 
 include::usage/domainClasses.adoc[]
 
+include::usage/configurableDomainClasses.adoc[]
+
 include::usage/configuration.adoc[]
 
 include::usage/runAs.adoc[]

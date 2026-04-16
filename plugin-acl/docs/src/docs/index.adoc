@@ -33,6 +33,8 @@ include::installing.adoc[]
 
 include::usage.adoc[]
 
+include::migrationGuide.adoc[]
+
 include::tutorial.adoc[]
 
 include::sampleApp.adoc[]

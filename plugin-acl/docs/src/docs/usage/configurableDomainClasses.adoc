@@ -1,0 +1,121 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+////
+
+[[acl-configurableDomainClasses]]
+=== Configurable Domain Classes
+
+The plugin uses a trait-based architecture that allows you to replace the default ACL domain classes with your own custom implementations. This is useful when you need to add additional fields, configure caching, or integrate with features such as GORM multi-tenancy.
+
+==== Trait Architecture
+
+The plugin defines four traits in the `grails.plugin.springsecurity.acl.trait` package:
+
+[cols="1,2",options="header"]
+|====================
+| *Trait* | *Purpose*
+| `AclClassTrait` | Contract for the domain class that stores ACL-protected class names. Requires a `String className` property.
+| `AclSidTrait` | Contract for the security identity domain class. Requires `String sid` and `boolean principal` properties.
+| `AclObjectIdentityTrait` | Contract for the object identity domain class. Requires `Serializable objectId`, `boolean entriesInheriting`, and references to `aclClass`, `parent`, and `owner`.
+| `AclEntryTrait` | Contract for the ACL entry domain class. Requires `int aceOrder`, `int mask`, `boolean granting`, `boolean auditSuccess`, `boolean auditFailure`, and references to `aclObjectIdentity` and `sid`.
+|====================
+
+The default implementations (`DefaultAclClass`, `DefaultAclSid`, `DefaultAclObjectIdentity`, `DefaultAclEntry`) implement these traits and are used out of the box. The `AclDomainClassResolver` bean resolves which domain classes to use at runtime based on configuration.
+
+==== Configuration Properties
+
+To use custom domain classes, add the following properties to `grails-app/conf/application.groovy`:
+
+[source,groovy]
+----
+grails.plugin.springsecurity.acl.aclClass.className = 'com.mycompany.myapp.AclClass'
+grails.plugin.springsecurity.acl.aclSid.className = 'com.mycompany.myapp.AclSid'
+grails.plugin.springsecurity.acl.aclObjectIdentity.className = 'com.mycompany.myapp.AclObjectIdentity'
+grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEntry'
+----
+
+If these properties are not set, the plugin falls back to the `Default*` classes.
+
+==== Custom Implementation Example
+
+A minimal custom `AclClass` implementation looks like this:
+
+[source,groovy]
+----
+package com.mycompany.myapp
+
+import grails.plugin.springsecurity.acl.trait.AclClassTrait
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@EqualsAndHashCode(includes='className')
+@ToString(excludes='version', includeNames=true)
+class AclClass implements AclClassTrait {
+
+    private static final long serialVersionUID = 1
+
+    String className
+
+    static mapping = {
+        className column: 'class'
+        version false
+        cache true // enable 2nd-level caching
+    }
+
+    static constraints = {
+        className unique: true, blank: false
+    }
+}
+----
+
+The <<acl-s2-create-acl-domains>> script generates all four domain classes and configures `application.groovy` automatically.
+
+==== Multi-Tenancy Integration
+
+If your application uses GORM multi-tenancy, you can add the `MultiTenant` trait to your custom domain classes. For example:
+
+[source,groovy]
+----
+package com.mycompany.myapp
+
+import grails.gorm.MultiTenant
+import grails.plugin.springsecurity.acl.trait.AclClassTrait
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@EqualsAndHashCode(includes='className')
+@ToString(excludes='version', includeNames=true)
+class AclClass implements AclClassTrait, MultiTenant<AclClass> {
+
+    private static final long serialVersionUID = 1
+
+    String className
+    // GORM adds tenantId automatically
+
+    static mapping = {
+        className column: 'class'
+        version false
+    }
+
+    static constraints = {
+        className unique: true, blank: false
+    }
+}
+----
+
+Apply the same pattern to `AclSid`, `AclObjectIdentity`, and `AclEntry` to make all ACL data tenant-aware.

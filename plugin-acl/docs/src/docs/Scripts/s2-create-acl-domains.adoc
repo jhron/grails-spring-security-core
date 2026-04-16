@@ -22,14 +22,35 @@ under the License.
 
 .Purpose
 
-Creates the domain classes that manage ACL data.
+Creates the domain classes that manage ACL data and updates `application.groovy` with the corresponding configuration properties.
 
-.Example
+.Examples
 
 ....
 grails s2-create-acl-domains
 ....
 
+....
+grails s2-create-acl-domains com.mycompany.myapp
+....
+
 .Description
 
-The plugin includes the required ACL domain classes, but if you want to customize them (for example to configure 2^nd^-level caching) you can use this script to generate the same domain classes in your application's `grails-app/domain` folder to allow minor customization.
+The plugin includes the required ACL domain classes (named `DefaultAclClass`, `DefaultAclSid`, `DefaultAclObjectIdentity`, and `DefaultAclEntry`), but if you want to customize them (for example to configure 2^nd^-level caching or add multi-tenancy support) you can use this script to generate domain classes in your application's `grails-app/domain` folder.
+
+An optional package argument can be specified to control where the generated classes are placed. If omitted, the default package `grails.plugin.springsecurity.acl` is used.
+
+The generated classes implement the corresponding ACL traits (`AclClassTrait`, `AclSidTrait`, `AclObjectIdentityTrait`, `AclEntryTrait`) so the plugin can work with your custom implementations.
+
+In addition to generating the domain classes, the script automatically appends configuration properties to `grails-app/conf/application.groovy` that tell the plugin to use your custom classes instead of the defaults:
+
+[source,groovy]
+----
+// Added by the Spring Security ACL plugin:
+grails.plugin.springsecurity.acl.aclClass.className = 'com.mycompany.myapp.AclClass'
+grails.plugin.springsecurity.acl.aclSid.className = 'com.mycompany.myapp.AclSid'
+grails.plugin.springsecurity.acl.aclObjectIdentity.className = 'com.mycompany.myapp.AclObjectIdentity'
+grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEntry'
+----
+
+NOTE: If `application.groovy` already contains `acl.aclClass.className`, the script will not add duplicate entries.

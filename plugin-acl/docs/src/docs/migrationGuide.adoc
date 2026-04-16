@@ -1,0 +1,92 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+////
+
+[[acl-migrationGuide]]
+== Migration Guide
+
+This section covers breaking changes and migration steps for upgrading to the current version of the ACL plugin.
+
+=== Breaking Changes
+
+==== Domain Class Renaming
+
+The built-in ACL domain classes have been renamed to avoid collisions with user-generated domain classes:
+
+[cols="1,1",options="header"]
+|====================
+| *Previous Name* | *New Name*
+| `AclClass` | `DefaultAclClass`
+| `AclSid` | `DefaultAclSid`
+| `AclObjectIdentity` | `DefaultAclObjectIdentity`
+| `AclEntry` | `DefaultAclEntry`
+|====================
+
+All classes remain in the `grails.plugin.springsecurity.acl` package.
+
+==== AbstractAclObjectIdentity Removed
+
+The `AbstractAclObjectIdentity` base class has been removed. Its functionality is replaced by the `AclObjectIdentityTrait` trait. If your code extended `AbstractAclObjectIdentity`, you should instead implement `AclObjectIdentityTrait`.
+
+==== New Trait-Based Architecture
+
+Domain classes now implement traits (`AclClassTrait`, `AclSidTrait`, `AclObjectIdentityTrait`, `AclEntryTrait`) rather than using class inheritance. See <<acl-configurableDomainClasses>> for details.
+
+==== New Configuration Properties
+
+The plugin now uses configuration properties to resolve domain classes at runtime. If not specified, the `Default*` classes are used. When using custom domain classes, you must add configuration properties to `application.groovy`:
+
+[source,groovy]
+----
+grails.plugin.springsecurity.acl.aclClass.className = 'com.mycompany.myapp.AclClass'
+grails.plugin.springsecurity.acl.aclSid.className = 'com.mycompany.myapp.AclSid'
+grails.plugin.springsecurity.acl.aclObjectIdentity.className = 'com.mycompany.myapp.AclObjectIdentity'
+grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEntry'
+----
+
+=== Migration Steps
+
+Follow these steps to upgrade an existing application:
+
+. **Update imports and references.** Replace any direct references to the old class names:
++
+[cols="1,1",options="header"]
+|====================
+| *Replace* | *With*
+| `import grails.plugin.springsecurity.acl.AclClass` | `import grails.plugin.springsecurity.acl.DefaultAclClass`
+| `import grails.plugin.springsecurity.acl.AclSid` | `import grails.plugin.springsecurity.acl.DefaultAclSid`
+| `import grails.plugin.springsecurity.acl.AclObjectIdentity` | `import grails.plugin.springsecurity.acl.DefaultAclObjectIdentity`
+| `import grails.plugin.springsecurity.acl.AclEntry` | `import grails.plugin.springsecurity.acl.DefaultAclEntry`
+|====================
++
+If your code extended `AbstractAclObjectIdentity`, replace that with `implements AclObjectIdentityTrait`.
+
+. **Add configuration properties to `application.groovy`.** If you are using the default domain classes, no configuration is required -- the plugin falls back to `DefaultAclClass`, `DefaultAclSid`, `DefaultAclObjectIdentity`, and `DefaultAclEntry` automatically.
++
+If you have custom domain classes, add the `className` properties as shown above.
+
+. **Or run the `s2-create-acl-domains` script.** Instead of manual migration, you can run the script to generate fresh custom domain classes and have `application.groovy` updated automatically:
++
+[source,bash]
+----
+grails s2-create-acl-domains com.mycompany.myapp
+----
++
+This generates trait-based domain classes in your application and appends the required configuration properties.
+
+. **Verify database compatibility.** The default table and column names have not changed, so existing database schemas should continue to work without modification.
