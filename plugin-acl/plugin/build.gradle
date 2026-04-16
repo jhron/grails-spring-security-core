@@ -79,3 +79,33 @@ apply {
     from rootProject.layout.projectDirectory.file('gradle/publish-config.gradle')
     from rootProject.layout.projectDirectory.file('gradle/reproducible-config.gradle')
 }
+
+// BSA Nexus publishing — for development/testing only, remove before upstream PR
+def bsaMavenReleaseUrl = project.findProperty('mavenReleaseUrl') ?: 'https://sirius.bsa-soft.cz/nexus/content/repositories/releases/'
+def bsaMavenSnapshotUrl = project.findProperty('mavenSnapshotUrl') ?: 'https://sirius.bsa-soft.cz/nexus/content/repositories/snapshots/'
+def bsaMavenRepositoryUrl = version.toString().endsWith('-SNAPSHOT') ? bsaMavenSnapshotUrl : bsaMavenReleaseUrl
+def bsaMavenUsername = project.findProperty('mavenUser') ?: System.getenv('MAVEN_USER')
+def bsaMavenPassword = project.findProperty('mavenPassword') ?: System.getenv('MAVEN_PASSWORD')
+
+publishing {
+    repositories {
+        maven {
+            name = 'bsaNexus'
+            url = uri(bsaMavenRepositoryUrl)
+            if (bsaMavenUsername && bsaMavenPassword) {
+                credentials {
+                    username = bsaMavenUsername
+                    password = bsaMavenPassword
+                }
+            }
+        }
+    }
+}
+
+tasks.matching { it.name == 'publishMavenPublicationToBsaNexusRepository' }.configureEach {
+    doFirst {
+        if (!bsaMavenUsername || !bsaMavenPassword) {
+            throw new GradleException('Missing Maven repository credentials. Define mavenUser/mavenPassword Gradle properties or MAVEN_USER/MAVEN_PASSWORD environment variables.')
+        }
+    }
+}
