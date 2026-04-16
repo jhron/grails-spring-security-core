@@ -19,10 +19,10 @@
 
 package com.testacl
 
-import grails.plugin.springsecurity.acl.AclClass
-import grails.plugin.springsecurity.acl.AclEntry
-import grails.plugin.springsecurity.acl.AclObjectIdentity
-import grails.plugin.springsecurity.acl.AclSid
+import grails.plugin.springsecurity.acl.DefaultAclClass
+import grails.plugin.springsecurity.acl.DefaultAclEntry
+import grails.plugin.springsecurity.acl.DefaultAclObjectIdentity
+import grails.plugin.springsecurity.acl.DefaultAclSid
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -107,23 +107,23 @@ class ReportController {
 
 		def html = new StringBuilder()
 
-		html << "<br/>${AclClass.count()} AclClass:<br/>"
-		AclClass.list().each { AclClass aclClass ->
+		html << "<br/>${DefaultAclClass.count()} AclClass:<br/>"
+		DefaultAclClass.list().each { DefaultAclClass aclClass ->
 			html << "&nbsp;&nbsp;&nbsp;ID: $aclClass.id, class name: $aclClass.className<br/>"
 		}
 
-		html << "<br/>${AclSid.count()} AclSid:<br/>"
-		AclSid.list().each { AclSid aclSid ->
+		html << "<br/>${DefaultAclSid.count()} AclSid:<br/>"
+		DefaultAclSid.list().each { DefaultAclSid aclSid ->
 			html << "&nbsp;&nbsp;&nbsp;ID: $aclSid.id, SID: $aclSid.sid : principal: $aclSid.principal<br/>"
 		}
 
-		html << "<br/>${AclObjectIdentity.count()} AclObjectIdentity:<br/>"
-		AclObjectIdentity.list().each { AclObjectIdentity aoi ->
+		html << "<br/>${DefaultAclObjectIdentity.count()} AclObjectIdentity:<br/>"
+		DefaultAclObjectIdentity.list().each { DefaultAclObjectIdentity aoi ->
 			html << "&nbsp;&nbsp;&nbsp;ID: $aoi.id, objectId: $aoi.objectId, aclClass: $aoi.aclClass.id($aoi.aclClass.className), owner: $aoi.owner.id<br/>"
 		}
 
-		html << "<br/>${AclEntry.count()} AclEntry:<br/>"
-		AclEntry.list().each { AclEntry aclEntry ->
+		html << "<br/>${DefaultAclEntry.count()} AclEntry:<br/>"
+		DefaultAclEntry.list().each { DefaultAclEntry aclEntry ->
 			html << "&nbsp;&nbsp;&nbsp;ID: $aclEntry.id, aclObjectIdentity: $aclEntry.aclObjectIdentity.id, order: $aclEntry.aceOrder, sid: $aclEntry.sid.id($aclEntry.sid.sid), mask: $aclEntry.mask<br/>"
 		}
 

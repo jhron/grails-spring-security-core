@@ -50,3 +50,9 @@ grails {
 		}
 	}
 }
+
+// ACL domain class configuration
+grails.plugin.springsecurity.acl.aclClass.className = 'grails.plugin.springsecurity.acl.DefaultAclClass'
+grails.plugin.springsecurity.acl.aclSid.className = 'grails.plugin.springsecurity.acl.DefaultAclSid'
+grails.plugin.springsecurity.acl.aclObjectIdentity.className = 'grails.plugin.springsecurity.acl.DefaultAclObjectIdentity'
+grails.plugin.springsecurity.acl.aclEntry.className = 'grails.plugin.springsecurity.acl.DefaultAclEntry'

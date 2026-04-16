@@ -20,11 +20,11 @@
 package com.testacl
 
 import grails.gorm.DetachedCriteria
-import grails.plugin.springsecurity.acl.AclClass
-import grails.plugin.springsecurity.acl.AclEntry
-import grails.plugin.springsecurity.acl.AclObjectIdentity
+import grails.plugin.springsecurity.acl.DefaultAclClass
+import grails.plugin.springsecurity.acl.DefaultAclEntry
+import grails.plugin.springsecurity.acl.DefaultAclObjectIdentity
 import grails.plugin.springsecurity.acl.AclService
-import grails.plugin.springsecurity.acl.AclSid
+import grails.plugin.springsecurity.acl.DefaultAclSid
 import grails.plugin.springsecurity.acl.AclUtilService
 import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
@@ -59,7 +59,7 @@ class TestDataService {
 	void deleteAll() {
 		log.debug 'deleteAll'
 
-		[AclEntry, AclObjectIdentity, AclSid, AclClass, UserRole, User, Role, Report].each { clazz ->
+		[DefaultAclEntry, DefaultAclObjectIdentity, DefaultAclSid, DefaultAclClass, UserRole, User, Role, Report].each { clazz ->
 
 			if (!clazz.count()) return
 
