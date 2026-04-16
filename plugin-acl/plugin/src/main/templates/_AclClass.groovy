@@ -1,39 +1,23 @@
-/*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
- *
- *    https://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
-
 package grails.plugin.springsecurity.acl
 
-class AclClass {
+import grails.plugin.springsecurity.acl.trait.AclClassTrait
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
-	String className
+@EqualsAndHashCode(includes='className')
+@ToString(excludes='version', includeNames=true)
+class AclClass implements AclClassTrait {
 
-	@Override
-	String toString() {
-		"AclClass id \$id, className \$className"
-	}
+    private static final long serialVersionUID = 1
 
-	static mapping = {
-		className column: 'class'
-		version false
-	}
+    String className
 
-	static constraints = {
-		className unique: true, blank: false
-	}
+    static mapping = {
+        className column: 'class'
+        version false
+    }
+
+    static constraints = {
+        className unique: true, blank: false
+    }
 }
