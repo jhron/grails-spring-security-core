@@ -162,6 +162,8 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 			return
 		}
 
+		applicationContext.aclDomainClassResolver.initialize()
+
 		applicationContext.aclSecurityMetadataSource.methodSecurityMetadataSources = [
 			applicationContext.prePostAnnotationSecurityMetadataSource,
 			applicationContext.springSecuredAnnotationSecurityMetadataSource,
@@ -171,6 +173,10 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 	}
 
 	private configureCoreBeans = { conf ->
+
+		aclDomainClassResolver(AclDomainClassResolver) {
+			grailsApplication = grailsApplication
+		}
 
 		sidRetrievalStrategy(SidRetrievalStrategyImpl, ref('roleHierarchy'))
 
@@ -204,6 +210,7 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		aclPermissionFactory(DefaultPermissionFactory, permissionClass ?: BasePermission)
 
 		aclLookupStrategy(GormAclLookupStrategy) {
+			aclDomainClassResolver = ref('aclDomainClassResolver')
 			aclAuthorizationStrategy = ref('aclAuthorizationStrategy')
 			aclCache = ref('aclCache')
 			permissionFactory = ref('aclPermissionFactory')
