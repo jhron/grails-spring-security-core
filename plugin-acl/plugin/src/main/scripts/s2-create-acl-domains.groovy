@@ -18,19 +18,42 @@
  */
 
 /**
- * Copies the plugin's ACL domain classes to the project. The package and names cannot be
- * specified since plugin classes depend on them. But they should be in the project's
- * grails-app/domain folder to allow customization such as Hibernate 2nd-level caching.
+ * Copies the plugin's ACL domain classes to the project and updates
+ * the security configuration with domain class names.
+ * An optional package argument can be specified.
  *
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 
-description 'Copies ACL domain classes to the project', {
-	usage 'grails s2-create-acl-domains'
+description 'Copies ACL domain classes to the project and updates security config', {
+    usage 'grails s2-create-acl-domains [package]'
 }
 
+String packageName = args ? args[0] : 'grails.plugin.springsecurity.acl'
+String packagePath = packageName.replace('.', '/')
+
 ['AclClass', 'AclEntry', 'AclObjectIdentity', 'AclSid'].each { String name ->
-	render template: template('_' + name + '.groovy'),
-	       destination: file("grails-app/domain/grails/plugin/springsecurity/acl/${name}.groovy"),
-	       overwrite: false
+    render template: template('_' + name + '.groovy'),
+           destination: file("grails-app/domain/${packagePath}/${name}.groovy"),
+           overwrite: false
 }
+
+// Update application.groovy with domain class config
+File configFile = file('grails-app/conf/application.groovy') as File
+if (configFile.exists()) {
+    String configText = configFile.text
+    if (!configText.contains('acl.aclClass.className')) {
+        configFile.withWriterAppend { writer ->
+            writer.newLine()
+            writer.writeLine '// Added by the Spring Security ACL plugin:'
+            writer.writeLine "grails.plugin.springsecurity.acl.aclClass.className = '${packageName}.AclClass'"
+            writer.writeLine "grails.plugin.springsecurity.acl.aclSid.className = '${packageName}.AclSid'"
+            writer.writeLine "grails.plugin.springsecurity.acl.aclObjectIdentity.className = '${packageName}.AclObjectIdentity'"
+            writer.writeLine "grails.plugin.springsecurity.acl.aclEntry.className = '${packageName}.AclEntry'"
+        }
+        println "Updated application.groovy with ACL domain class configuration"
+    }
+}
+
+println "ACL domain classes generated in ${packagePath}/"
+println "You can now customize them (e.g., add MultiTenant trait for multi-tenancy support)"
