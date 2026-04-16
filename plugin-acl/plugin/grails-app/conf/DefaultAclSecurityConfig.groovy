@@ -22,6 +22,22 @@ security {
 
 		active = true
 
+		aclClass {
+			className = 'grails.plugin.springsecurity.acl.DefaultAclClass'
+		}
+
+		aclSid {
+			className = 'grails.plugin.springsecurity.acl.DefaultAclSid'
+		}
+
+		aclObjectIdentity {
+			className = 'grails.plugin.springsecurity.acl.DefaultAclObjectIdentity'
+		}
+
+		aclEntry {
+			className = 'grails.plugin.springsecurity.acl.DefaultAclEntry'
+		}
+
 		authority {
 			changeOwnership       = 'ROLE_ADMIN'
 			modifyAuditingDetails = 'ROLE_ADMIN'
