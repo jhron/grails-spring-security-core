@@ -289,9 +289,9 @@ class AclServiceSpec extends AbstractIntegrationSpec {
 		Report.withSession { it.flush(); it.clear(); }
 
 		then:
-		1 == AclClass.countByClassName(Report.name)
-		0 == AclObjectIdentity.count()
-		0 == AclEntry.count()
+		1 == DefaultAclClass.countByClassName(Report.name)
+		0 == DefaultAclObjectIdentity.count()
+		0 == DefaultAclEntry.count()
 
 		// Check the cache
 		!aclCache.getFromCache(childOid)

@@ -10,15 +10,15 @@ class AclObjectIdentityEqualsSpec extends Specification {
 
     void 'two AclObjectIdentity with same objectId but different aclClass are not equal'() {
         given:
-        def aclClass1 = new AclClass(className: 'com.example.Report').save(failOnError: true)
-        def aclClass2 = new AclClass(className: 'com.example.Document').save(failOnError: true)
-        def sid = new AclSid(sid: 'admin', principal: true).save(failOnError: true)
+        def aclClass1 = new DefaultAclClass(className: 'com.example.Report').save(failOnError: true)
+        def aclClass2 = new DefaultAclClass(className: 'com.example.Document').save(failOnError: true)
+        def sid = new DefaultAclSid(sid: 'admin', principal: true).save(failOnError: true)
 
         when:
-        def oid1 = new AclObjectIdentity(
+        def oid1 = new DefaultAclObjectIdentity(
             aclClass: aclClass1, objectId: 42L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
-        def oid2 = new AclObjectIdentity(
+        def oid2 = new DefaultAclObjectIdentity(
             aclClass: aclClass2, objectId: 42L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
 
@@ -29,11 +29,11 @@ class AclObjectIdentityEqualsSpec extends Specification {
 
     void 'two AclObjectIdentity with same objectId and same aclClass are equal'() {
         given:
-        def aclClass = new AclClass(className: 'com.example.Report').save(failOnError: true)
-        def sid = new AclSid(sid: 'admin', principal: true).save(failOnError: true)
+        def aclClass = new DefaultAclClass(className: 'com.example.Report').save(failOnError: true)
+        def sid = new DefaultAclSid(sid: 'admin', principal: true).save(failOnError: true)
 
         when:
-        def oid1 = new AclObjectIdentity(
+        def oid1 = new DefaultAclObjectIdentity(
             aclClass: aclClass, objectId: 42L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
 
@@ -41,8 +41,8 @@ class AclObjectIdentityEqualsSpec extends Specification {
         oid1 == oid1
 
         when: 'fresh load from DB'
-        AclObjectIdentity.withSession { it.flush(); it.clear() }
-        def oid1Reloaded = AclObjectIdentity.get(oid1.id)
+        DefaultAclObjectIdentity.withSession { it.flush(); it.clear() }
+        def oid1Reloaded = DefaultAclObjectIdentity.get(oid1.id)
 
         then:
         oid1 == oid1Reloaded

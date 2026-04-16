@@ -43,46 +43,46 @@ class AclUtilServiceSpec extends AbstractAclSpec {
 		authenticateAsAdmin()
 
 		then:
-		0 == AclClass.count()
-		0 == AclEntry.count()
-		0 == AclObjectIdentity.count()
-		0 == AclSid.count()
+		0 == DefaultAclClass.count()
+		0 == DefaultAclEntry.count()
+		0 == DefaultAclObjectIdentity.count()
+		0 == DefaultAclSid.count()
 
 		when:
 		aclUtilService.addPermission Report.get(report1Id), USER, READ
 
 		then:
-		1 == AclClass.count()
+		1 == DefaultAclClass.count()
 
 		when:
-		def aclClass = AclClass.list()[0]
+		def aclClass = DefaultAclClass.list()[0]
 
 		then:
 		Report.name == aclClass.className
 
-		2 == AclSid.count()
+		2 == DefaultAclSid.count()
 
 		when:
-		def adminSid = AclSid.list()[0]
-		def userSid = AclSid.list()[1]
+		def adminSid = DefaultAclSid.list()[0]
+		def userSid = DefaultAclSid.list()[1]
 
 		then:
 		ADMIN == adminSid.sid
 		USER == userSid.sid
 
-		1 == AclObjectIdentity.count()
+		1 == DefaultAclObjectIdentity.count()
 
 		when:
-		def identity = AclObjectIdentity.list()[0]
+		def identity = DefaultAclObjectIdentity.list()[0]
 
 		then:
 		aclClass == identity.aclClass
 		report1Id == identity.objectId
 
-		1 == AclEntry.count()
+		1 == DefaultAclEntry.count()
 
 		when:
-		def entry = AclEntry.list()[0]
+		def entry = DefaultAclEntry.list()[0]
 
 		then:
 		userSid == entry.sid

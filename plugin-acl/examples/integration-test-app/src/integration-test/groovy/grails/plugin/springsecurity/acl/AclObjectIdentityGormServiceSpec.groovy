@@ -12,35 +12,35 @@ class AclObjectIdentityGormServiceSpec extends Specification {
 
     void 'findAllByParentObjectIdAndParentAclClassName returns children of a given parent'() {
         given:
-        def sid = new AclSid(sid: 'admin', principal: true).save(failOnError: true)
-        def aclClass = new AclClass(className: 'com.example.Report').save(failOnError: true)
-        def aclClass2 = new AclClass(className: 'com.example.Document').save(failOnError: true)
+        def sid = new DefaultAclSid(sid: 'admin', principal: true).save(failOnError: true)
+        def aclClass = new DefaultAclClass(className: 'com.example.Report').save(failOnError: true)
+        def aclClass2 = new DefaultAclClass(className: 'com.example.Document').save(failOnError: true)
 
-        def parent = new AclObjectIdentity(
+        def parent = new DefaultAclObjectIdentity(
             aclClass: aclClass, objectId: 100L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
 
-        def child1 = new AclObjectIdentity(
+        def child1 = new DefaultAclObjectIdentity(
             aclClass: aclClass, objectId: 101L, owner: sid, entriesInheriting: true, parent: parent
         ).save(failOnError: true)
 
-        def child2 = new AclObjectIdentity(
+        def child2 = new DefaultAclObjectIdentity(
             aclClass: aclClass, objectId: 102L, owner: sid, entriesInheriting: true, parent: parent
         ).save(failOnError: true)
 
         // unrelated — different parent class
-        def unrelatedParent = new AclObjectIdentity(
+        def unrelatedParent = new DefaultAclObjectIdentity(
             aclClass: aclClass2, objectId: 200L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
 
-        def unrelatedChild = new AclObjectIdentity(
+        def unrelatedChild = new DefaultAclObjectIdentity(
             aclClass: aclClass2, objectId: 201L, owner: sid, entriesInheriting: true, parent: unrelatedParent
         ).save(failOnError: true)
 
-        AclObjectIdentity.withSession { it.flush(); it.clear() }
+        DefaultAclObjectIdentity.withSession { it.flush(); it.clear() }
 
         when:
-        List<AclObjectIdentity> result = aclObjectIdentityGormService
+        List<DefaultAclObjectIdentity> result = aclObjectIdentityGormService
             .findAllByParentObjectIdAndParentAclClassName(100L, 'com.example.Report')
 
         then:
@@ -50,17 +50,17 @@ class AclObjectIdentityGormServiceSpec extends Specification {
 
     void 'findAllByParentObjectIdAndParentAclClassName returns empty list when no children'() {
         given:
-        def sid = new AclSid(sid: 'admin', principal: true).save(failOnError: true)
-        def aclClass = new AclClass(className: 'com.example.Report').save(failOnError: true)
+        def sid = new DefaultAclSid(sid: 'admin', principal: true).save(failOnError: true)
+        def aclClass = new DefaultAclClass(className: 'com.example.Report').save(failOnError: true)
 
-        new AclObjectIdentity(
+        new DefaultAclObjectIdentity(
             aclClass: aclClass, objectId: 100L, owner: sid, entriesInheriting: true
         ).save(failOnError: true)
 
-        AclObjectIdentity.withSession { it.flush(); it.clear() }
+        DefaultAclObjectIdentity.withSession { it.flush(); it.clear() }
 
         when:
-        List<AclObjectIdentity> result = aclObjectIdentityGormService
+        List<DefaultAclObjectIdentity> result = aclObjectIdentityGormService
             .findAllByParentObjectIdAndParentAclClassName(100L, 'com.example.Report')
 
         then:
