@@ -28,7 +28,7 @@ import groovy.transform.ToString
  *
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
-@EqualsAndHashCode(includes=['aclClass', 'parent', 'owner', 'entriesInheriting'])
+@EqualsAndHashCode(includes=['aclClass'])
 @ToString(includeNames=true)
 @DirtyCheck
 abstract class AbstractAclObjectIdentity implements Serializable {

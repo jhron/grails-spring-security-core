@@ -19,15 +19,11 @@
 
 package grails.plugin.springsecurity.acl
 
+@groovy.transform.EqualsAndHashCode(includes='objectId', callSuper=true)
+@groovy.transform.ToString(includeNames=true, includeSuper=true)
 class AclObjectIdentity extends AbstractAclObjectIdentity {
 
 	Long objectId
-
-	@Override
-	String toString() {
-		"AclObjectIdentity id \$id, aclClass \$aclClass.className, " +
-		"objectId \$objectId, entriesInheriting \$entriesInheriting"
-	}
 
 	static mapping = {
 		version false
