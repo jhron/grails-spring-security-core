@@ -103,6 +103,25 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 
 	private beanTypeResolver
 
+	/**
+	 * The four Default* ACL domain classes live in src/main/groovy (annotated with
+	 * {@link grails.gorm.annotation.Entity}) rather than grails-app/domain, so they are registered
+	 * as GORM domain artefacts only through this list. This lets the plugin withhold them when an
+	 * application opts out of the built-in ACL schema.
+	 *
+	 * <p>Grails 7 motivation: GORM 9 ignores {@code mapWith 'none'} inside a domain's mapping closure,
+	 * so a domain can no longer exclude itself from Hibernate mapping. Instead, when an application sets
+	 * {@code grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false} (because it supplies
+	 * its own ACL domain classes via the {@code acl.<domain>.className} keys), the defaults are not
+	 * provided as artefacts, so GORM never maps them and no {@code default_acl_*} tables are created.
+	 * When the key is unset or {@code true}, the defaults are provided exactly as before.</p>
+	 */
+	List<Class> getProvidedArtefacts() {
+		boolean useDefaults = grailsApplication.config.getProperty(
+				'grails.plugin.springsecurity.acl.useDefaultDomainDefinitions', Boolean, true)
+		useDefaults ? [DefaultAclClass, DefaultAclSid, DefaultAclObjectIdentity, DefaultAclEntry] : []
+	}
+
 	Closure doWithSpring() {{ ->
 
 		def conf = SpringSecurityUtils.securityConfig

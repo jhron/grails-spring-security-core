@@ -1,10 +1,12 @@
 package grails.plugin.springsecurity.acl
 
+import grails.gorm.annotation.Entity
 import grails.gorm.dirty.checking.DirtyCheck
 import grails.plugin.springsecurity.acl.trait.AclObjectIdentityTrait
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+@Entity
 @DirtyCheck
 @EqualsAndHashCode(includes=['aclClass', 'objectId'], callSuper=false)
 @ToString(includeNames=true)

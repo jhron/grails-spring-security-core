@@ -57,7 +57,10 @@ grails.plugin.springsecurity.acl.aclClass.className = 'com.mycompany.myapp.AclCl
 grails.plugin.springsecurity.acl.aclSid.className = 'com.mycompany.myapp.AclSid'
 grails.plugin.springsecurity.acl.aclObjectIdentity.className = 'com.mycompany.myapp.AclObjectIdentity'
 grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEntry'
+grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false
 ----
+
+Setting `useDefaultDomainDefinitions = false` prevents the plugin's `Default*` domain classes from being registered as GORM artefacts, so they are not mapped and no `default_acl_*` tables are created next to your own. The property defaults to `true`.
 
 === Migration Steps
 
@@ -78,7 +81,7 @@ If your code extended `AbstractAclObjectIdentity`, replace that with `implements
 
 . **Add configuration properties to `application.groovy`.** If you are using the default domain classes, no configuration is required -- the plugin falls back to `DefaultAclClass`, `DefaultAclSid`, `DefaultAclObjectIdentity`, and `DefaultAclEntry` automatically.
 +
-If you have custom domain classes, add the `className` properties as shown above.
+If you have custom domain classes, add the `className` properties as shown above, and set `grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false` so the plugin's `Default*` classes are not mapped alongside yours.
 
 . **Or run the `s2-create-acl-domains` script.** Instead of manual migration, you can run the script to generate fresh custom domain classes and have `application.groovy` updated automatically:
 +

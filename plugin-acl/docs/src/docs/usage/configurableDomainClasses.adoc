@@ -51,6 +51,17 @@ grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEn
 
 If these properties are not set, the plugin falls back to the `Default*` classes.
 
+When you supply your own domain classes, also disable the built-in ones so they are not mapped by GORM alongside yours:
+
+[source,groovy]
+----
+grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false
+----
+
+With this property set to `false`, the `DefaultAclClass`, `DefaultAclSid`, `DefaultAclObjectIdentity`, and `DefaultAclEntry` classes are not registered as GORM domain artefacts, so no `default_acl_*` tables are created. The property defaults to `true`, which preserves the out-of-the-box behavior. The <<acl-s2-create-acl-domains>> script sets it to `false` for you.
+
+NOTE: On Grails 7 / GORM 9 this property is the supported way to exclude the default domains. Earlier approaches such as `mapWith 'none'` in a domain mapping closure no longer prevent Hibernate from mapping the class.
+
 ==== Custom Implementation Example
 
 A minimal custom `AclClass` implementation looks like this:

@@ -1,9 +1,11 @@
 package grails.plugin.springsecurity.acl
 
+import grails.gorm.annotation.Entity
 import grails.plugin.springsecurity.acl.trait.AclClassTrait
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+@Entity
 @EqualsAndHashCode(includes='className')
 @ToString(excludes='version', includeNames=true)
 class DefaultAclClass implements AclClassTrait {
