@@ -16,6 +16,7 @@ class DefaultAclSid implements AclSidTrait {
     boolean principal
 
     static mapping = {
+        table 'acl_sid'
         version false
     }
 

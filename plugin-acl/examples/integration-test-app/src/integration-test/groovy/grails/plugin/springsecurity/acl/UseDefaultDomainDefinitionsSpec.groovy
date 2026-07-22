@@ -14,7 +14,8 @@ import javax.sql.DataSource
  * With the default suite configuration this verifies the default path. Run with
  * the key set to false in application.groovy to verify the opt-out path: the
  * Default* domains must not be registered as artefacts, not be GORM-mapped and
- * no default_acl_* tables may be created.
+ * none of the four acl_* tables may be created (this app defines no custom ACL
+ * domains, so the tables can only come from the defaults).
  */
 @Integration
 class UseDefaultDomainDefinitionsSpec extends Specification {
@@ -22,6 +23,10 @@ class UseDefaultDomainDefinitionsSpec extends Specification {
     private static final List<String> DEFAULT_DOMAIN_CLASS_NAMES = [
         DefaultAclClass, DefaultAclSid, DefaultAclObjectIdentity, DefaultAclEntry
     ]*.name
+
+    private static final List<String> DEFAULT_TABLE_NAMES = [
+        'acl_class', 'acl_sid', 'acl_object_identity', 'acl_entry'
+    ].asImmutable()
 
     GrailsApplication grailsApplication
     DataSource dataSource
@@ -32,14 +37,11 @@ class UseDefaultDomainDefinitionsSpec extends Specification {
             'grails.plugin.springsecurity.acl.useDefaultDomainDefinitions', Boolean, true)
         List<String> domainArtefacts = grailsApplication.getArtefacts('Domain')*.clazz*.name
         List<String> mappedEntities = grailsApplication.mappingContext.persistentEntities*.name
-        List<String> defaultAclTables = []
+        List<String> tables = []
         dataSource.connection.withCloseable { connection ->
             def rs = connection.metaData.getTables(null, null, '%', ['TABLE'] as String[])
             while (rs.next()) {
-                String table = rs.getString('TABLE_NAME')
-                if (table.toLowerCase().startsWith('default_acl')) {
-                    defaultAclTables << table
-                }
+                tables << rs.getString('TABLE_NAME').toLowerCase()
             }
         }
 
@@ -50,7 +52,8 @@ class UseDefaultDomainDefinitionsSpec extends Specification {
         DEFAULT_DOMAIN_CLASS_NAMES.every { String className ->
             mappedEntities.contains(className) == useDefaults
         }
-        (defaultAclTables.size() == 4) == useDefaults
-        useDefaults || defaultAclTables.isEmpty()
+        DEFAULT_TABLE_NAMES.every { String tableName ->
+            tables.contains(tableName) == useDefaults
+        }
     }
 }

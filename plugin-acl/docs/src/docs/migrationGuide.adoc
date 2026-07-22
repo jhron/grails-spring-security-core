@@ -60,7 +60,7 @@ grails.plugin.springsecurity.acl.aclEntry.className = 'com.mycompany.myapp.AclEn
 grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false
 ----
 
-Setting `useDefaultDomainDefinitions = false` prevents the plugin's `Default*` domain classes from being registered as GORM artefacts, so they are not mapped and no `default_acl_*` tables are created next to your own. The property defaults to `true`.
+Setting `useDefaultDomainDefinitions = false` prevents the plugin's `Default*` domain classes from being registered as GORM artefacts, so they are not mapped and the plugin creates no tables — your own domain classes then own the `acl_*` schema. The property defaults to `true`.
 
 === Migration Steps
 

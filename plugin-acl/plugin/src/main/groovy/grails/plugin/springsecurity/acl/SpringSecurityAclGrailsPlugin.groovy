@@ -113,7 +113,8 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 	 * so a domain can no longer exclude itself from Hibernate mapping. Instead, when an application sets
 	 * {@code grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false} (because it supplies
 	 * its own ACL domain classes via the {@code acl.<domain>.className} keys), the defaults are not
-	 * provided as artefacts, so GORM never maps them and no {@code default_acl_*} tables are created.
+	 * provided as artefacts, so GORM never maps them and the plugin creates no tables — the
+	 * application's own ACL domain classes then own the {@code acl_*} schema.
 	 * When the key is unset or {@code true}, the defaults are provided exactly as before.</p>
 	 */
 	List<Class> getProvidedArtefacts() {

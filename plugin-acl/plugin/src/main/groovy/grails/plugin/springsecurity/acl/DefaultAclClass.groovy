@@ -15,6 +15,7 @@ class DefaultAclClass implements AclClassTrait {
     String className
 
     static mapping = {
+        table 'acl_class'
         className column: 'class'
         version false
     }

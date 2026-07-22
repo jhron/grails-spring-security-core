@@ -21,6 +21,7 @@ class DefaultAclObjectIdentity implements AclObjectIdentityTrait {
     Long objectId
 
     static mapping = {
+        table 'acl_object_identity'
         version false
         aclClass column: 'object_id_class'
         owner column: 'owner_sid'

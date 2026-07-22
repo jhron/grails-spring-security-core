@@ -22,6 +22,7 @@ class DefaultAclEntry implements AclEntryTrait {
     boolean auditFailure
 
     static mapping = {
+        table 'acl_entry'
         version false
         sid column: 'sid'
         aclObjectIdentity column: 'acl_object_identity'

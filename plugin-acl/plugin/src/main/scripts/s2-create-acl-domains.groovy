@@ -50,7 +50,7 @@ if (configFile.exists()) {
             writer.writeLine "grails.plugin.springsecurity.acl.aclSid.className = '${packageName}.AclSid'"
             writer.writeLine "grails.plugin.springsecurity.acl.aclObjectIdentity.className = '${packageName}.AclObjectIdentity'"
             writer.writeLine "grails.plugin.springsecurity.acl.aclEntry.className = '${packageName}.AclEntry'"
-            // opt out of the plugin's Default* domains so they are not GORM-mapped (no default_acl_* tables)
+            // opt out of the plugin's Default* domains so they are not GORM-mapped (the generated classes own the acl_* tables)
             writer.writeLine 'grails.plugin.springsecurity.acl.useDefaultDomainDefinitions = false'
         }
         println "Updated application.groovy with ACL domain class configuration"
